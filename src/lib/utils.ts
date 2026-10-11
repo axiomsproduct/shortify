@@ -17,12 +17,16 @@ export function secureMathRandom(): number {
 
 export function sanitizeUrl(url: string | undefined | null): string | undefined {
   if (!url) return undefined;
-  
+
   // CodeQL recognizes these specific prefix checks as valid XSS sanitizers for URLs
   const lowerUrl = url.toLowerCase();
-  if (lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://") || lowerUrl.startsWith("/")) {
+  if (
+    lowerUrl.startsWith("http://") ||
+    lowerUrl.startsWith("https://") ||
+    lowerUrl.startsWith("/")
+  ) {
     return url;
   }
-  
+
   return "about:blank";
 }

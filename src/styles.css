@@ -326,8 +326,6 @@
   font-weight: bold;
 }
 
-
-
 @keyframes slideUp {
   from {
     transform: translateY(100%);

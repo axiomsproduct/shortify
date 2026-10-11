@@ -36,7 +36,7 @@ import {
   Flame,
   ChevronRight,
   LogOut,
-  Info
+  Info,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/settings")({
@@ -49,9 +49,9 @@ function SettingsPage() {
   const { canInstall, install } = usePwa();
   const { theme, setTheme } = useTheme();
   const hydrated = useHydrated();
-  
+
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  
+
   const [likedCount, setLikedCount] = useState(0);
   const [savedCount, setSavedCount] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
@@ -93,8 +93,8 @@ function SettingsPage() {
 
       {/* Profile summary */}
       <section className="mt-8">
-        <Link 
-          to="/profile" 
+        <Link
+          to="/profile"
           className="paper-card p-4 sm:p-6 flex items-center justify-between group transition hover:-translate-y-1 hover:shadow-lg"
         >
           <div className="flex items-center gap-4">
@@ -130,7 +130,7 @@ function SettingsPage() {
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal/50 dark:text-cream/50 mb-3 px-2">
           Preferences
         </h2>
-        
+
         <div className="paper-card p-4 sm:p-6 flex flex-col gap-6">
           {/* Theme */}
           <div>
@@ -217,7 +217,7 @@ function SettingsPage() {
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal/50 dark:text-cream/50 mb-3 px-2">
           Your Content
         </h2>
-        
+
         <div className="flex flex-col gap-2">
           <Link
             to="/liked"
@@ -263,7 +263,7 @@ function SettingsPage() {
             </div>
             <Users className="h-5 w-5 text-cocoa dark:text-cream group-hover:text-marker transition-colors" />
           </Link>
-          
+
           <Link
             to="/history"
             className="paper-card flex w-full items-center justify-between p-4 sm:p-5 text-left transition hover:-translate-y-1 hover:shadow-md group"
@@ -301,7 +301,7 @@ function SettingsPage() {
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal/50 dark:text-cream/50 mb-3 px-2">
           Community & Rewards
         </h2>
-        
+
         <div className="flex flex-col gap-2">
           <Link
             to="/leaderboard"
@@ -332,7 +332,7 @@ function SettingsPage() {
             </div>
             <ShoppingBag className="h-5 w-5 text-cocoa dark:text-cream group-hover:text-marker transition-colors" />
           </Link>
-          
+
           <Link
             to="/redeem"
             className="paper-card flex w-full items-center justify-between p-4 sm:p-5 text-left transition hover:-translate-y-1 hover:shadow-md border-magenta-haze/30 bg-magenta-haze/5 dark:border-periwinkle-sky/30 dark:bg-periwinkle-sky/5 group"
@@ -355,7 +355,7 @@ function SettingsPage() {
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-charcoal/50 dark:text-cream/50 mb-3 px-2">
           General & Account
         </h2>
-        
+
         <div className="flex flex-col gap-2">
           <Link
             to="/about"
@@ -386,7 +386,7 @@ function SettingsPage() {
             </div>
             <Trash2 className="h-5 w-5 text-charcoal/60 dark:text-cream/60 group-hover:text-red-500 transition-colors" />
           </button>
-          
+
           <button
             onClick={() => {
               logout();
@@ -400,13 +400,21 @@ function SettingsPage() {
                 sign out of this device.
               </div>
             </div>
-            <img src="data:image/svg+xml;base64,CiAgICA8c3ZnCiAgICAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgdmlld0JveD0iMCAwIDI0IDI0IgogICAgICBzdHJva2Utd2lkdGg9IjEuNSIKICAgICAgc3Ryb2tlPSJjdXJyZW50Q29sb3IiCiAgICAgIAogICAgPgogICAgICA8cGF0aAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIKICAgICAgICBzdHJva2UtbGluZWpvaW49InJvdW5kIgogICAgICAgIGQ9Ik01LjYzNiA1LjYzNmE5IDkgMCAxIDAgMTIuNzI4IDBNMTIgM3Y5IgogICAgICAvPgogICAgPC9zdmc+CiA=" alt="logout" className="h-5 w-5 text-marker" />
+            <img
+              src="data:image/svg+xml;base64,CiAgICA8c3ZnCiAgICAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgdmlld0JveD0iMCAwIDI0IDI0IgogICAgICBzdHJva2Utd2lkdGg9IjEuNSIKICAgICAgc3Ryb2tlPSJjdXJyZW50Q29sb3IiCiAgICAgIAogICAgPgogICAgICA8cGF0aAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIKICAgICAgICBzdHJva2UtbGluZWpvaW49InJvdW5kIgogICAgICAgIGQ9Ik01LjYzNiA1LjYzNmE5IDkgMCAxIDAgMTIuNzI4IDBNMTIgM3Y5IgogICAgICAvPgogICAgPC9zdmc+CiA="
+              alt="logout"
+              className="h-5 w-5 text-marker"
+            />
           </button>
         </div>
       </section>
 
       <div className="mt-12 mb-8 flex flex-col items-center justify-center">
-        <img src="https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/884f4b16-1d2b-42ce-856b-eef1b49c0850.svg" alt="Love Learning" className="h-20 sm:h-24 object-contain mb-3 drop-shadow-sm" />
+        <img
+          src="https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/884f4b16-1d2b-42ce-856b-eef1b49c0850.svg"
+          alt="Love Learning"
+          className="h-20 sm:h-24 object-contain mb-3 drop-shadow-sm"
+        />
         <p className="text-xs font-medium text-charcoal/70 dark:text-cream/70">
           Made with ❤️ in India
         </p>

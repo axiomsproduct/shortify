@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/home")({
+  validateSearch: (s: Record<string, unknown>) => ({ ...s }),
   component: HomePage,
 });
 
@@ -31,7 +32,8 @@ function HomePage() {
           start <span className="marker-underline">exploring.</span>
         </h1>
         <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-charcoal/80 dark:text-cream/70">
-          scroll till your thumb goes numb, or actually level up your life with our skills & speaking courses. tap play, hold to 2x speed, double-tap to like. it's that easy.
+          scroll till your thumb goes numb, or actually level up your life with our skills &
+          speaking courses. tap play, hold to 2x speed, double-tap to like. it's that easy.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Link to="/reels" className="btn-pill">

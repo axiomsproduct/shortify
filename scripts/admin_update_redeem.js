@@ -1,5 +1,7 @@
 import { loadEnvFile } from "node:process";
-try { loadEnvFile(); } catch (e) {}
+try {
+  loadEnvFile();
+} catch (e) {}
 
 import pkg from "pg";
 const { Client } = pkg;
@@ -23,7 +25,9 @@ async function main() {
     console.log("=== Recent Redeem Requests ===");
     console.table(res.rows);
     console.log("\nUsage to update status:");
-    console.log("  node scripts/admin_update_redeem.js <id> <status: completed|approved|rejected|pending> [notes]");
+    console.log(
+      "  node scripts/admin_update_redeem.js <id> <status: completed|approved|rejected|pending> [notes]",
+    );
   } else {
     const id = parseInt(args[0], 10);
     const status = args[1]?.toLowerCase() || "completed";
@@ -31,7 +35,7 @@ async function main() {
 
     const res = await client.query(
       `UPDATE public.user_redeem_data SET status = $1, admin_notes = $2, updated_at = NOW() WHERE id = $3 RETURNING *`,
-      [status, notes, id]
+      [status, notes, id],
     );
 
     if (res.rows.length === 0) {

@@ -55,7 +55,9 @@ function AppLayout() {
       {online && <Sidebar username={username} />}
       <div className="flex-1 min-w-0 flex flex-col relative h-screen overflow-y-auto bg-background">
         {!isReels && online && <MobileHeader username={username} />}
-        <main className={`flex-1 relative bg-background ${isReels || !online ? "" : "pt-14 pb-20 md:pb-0"}`}>
+        <main
+          className={`flex-1 relative bg-background ${isReels || !online ? "" : "pt-14 pb-20 md:pb-0"}`}
+        >
           {!online && pathname !== "/downloaded" ? (
             <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
               <div className="mb-6 rounded-full bg-destructive/10 p-4 text-destructive">
@@ -63,9 +65,15 @@ function AppLayout() {
               </div>
               <h1 className="mb-2 font-display text-4xl text-foreground">You're Offline bruh</h1>
               <p className="mb-8 max-w-md text-foreground/70">
-                damn, your wifi really said 'nope' today. did you forget to pay the bill or are you still stealing from your neighbor? anyway, while you rethink your life choices, go watch the stuff you hoarded in your downloads.
+                damn, your wifi really said 'nope' today. did you forget to pay the bill or are you
+                still stealing from your neighbor? anyway, while you rethink your life choices, go
+                watch the stuff you hoarded in your downloads.
               </p>
-              <Link to="/downloaded" search={{ tab: "library" }} className="btn-pill inline-flex items-center gap-2">
+              <Link
+                to="/downloaded"
+                search={{ tab: "library" }}
+                className="btn-pill inline-flex items-center gap-2"
+              >
                 <Download className="h-5 w-5" />
                 View Downloads
               </Link>
@@ -77,7 +85,7 @@ function AppLayout() {
         {!isReels && online && <BottomNav />}
       </div>
       <InstallPwa />
-      <StreakModal />
+      {online && <StreakModal />}
     </div>
   );
 }

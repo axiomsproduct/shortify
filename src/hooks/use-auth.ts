@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { KEYS, get, set, remove, initStorageData, isBrowser, setLocal } from "@/lib/storage";
-import { loginUserDb, signupUserDb, fetchUserData, updateUserDob, updateDeviceInfo } from "@/lib/db";
+import {
+  loginUserDb,
+  signupUserDb,
+  fetchUserData,
+  updateUserDob,
+  updateDeviceInfo,
+} from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 
 const SESSION_PIN_KEY = "ig.session_pin_ok";
@@ -46,7 +52,7 @@ function getDeviceInfo() {
       name: browser,
       userAgent: ua,
       cookiesEnabled: typeof navigator !== "undefined" ? navigator.cookieEnabled : true,
-    }
+    },
   };
 }
 
@@ -68,8 +74,12 @@ export function useAuth() {
       // 1. Fetch Maintenance Mode globally
       (async () => {
         try {
-          const { data: setting } = await supabase.from("platform_settings").select("value").eq("key", "maintenance").single();
-          if (setting) setIsMaintenance(setting.value === 'true' || setting.value === true);
+          const { data: setting } = await supabase
+            .from("platform_settings")
+            .select("value")
+            .eq("key", "maintenance")
+            .single();
+          if (setting) setIsMaintenance(setting.value === "true" || setting.value === true);
           else setIsMaintenance(false);
         } catch (e) {
           setIsMaintenance(false);
@@ -77,29 +87,45 @@ export function useAuth() {
 
         // Listen for maintenance mode changes globally
         const maintenanceChannel = `maintenance-sync-${crypto.randomUUID()}`;
-        supabase.channel(maintenanceChannel)
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'platform_settings', filter: `key=eq.maintenance` }, (payload) => {
-            const newData = payload.new as any;
-            if (newData && newData.value !== undefined) {
-              setIsMaintenance(newData.value === 'true' || newData.value === true);
-            }
-          })
+        supabase
+          .channel(maintenanceChannel)
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "platform_settings",
+              filter: `key=eq.maintenance`,
+            },
+            (payload) => {
+              const newData = payload.new as any;
+              if (newData && newData.value !== undefined) {
+                setIsMaintenance(newData.value === "true" || newData.value === true);
+              }
+            },
+          )
           .subscribe();
       })();
 
       // 2. Fetch User Data if logged in
       const uid = typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_id") : null;
-      const fallbackUserName = typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_name") : null;
+      const fallbackUserName =
+        typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_name") : null;
       const cachedUsername = get<string | null>(KEYS.username, null) || fallbackUserName;
-      
+
       let isAgeOk = false;
-      if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("ig.age_ok") === "true") isAgeOk = true;
-      if (typeof localStorage !== "undefined" && localStorage.getItem("ig.age_ok") === "true") isAgeOk = true;
+      if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("ig.age_ok") === "true")
+        isAgeOk = true;
+      if (typeof localStorage !== "undefined" && localStorage.getItem("ig.age_ok") === "true")
+        isAgeOk = true;
       if (uid) isAgeOk = true;
-      
+
       setAgeOk(isAgeOk);
       setUsername(cachedUsername);
-      const isSessionPinOk = typeof sessionStorage !== "undefined" ? sessionStorage.getItem(SESSION_PIN_KEY) === "true" : false;
+      const isSessionPinOk =
+        typeof sessionStorage !== "undefined"
+          ? sessionStorage.getItem(SESSION_PIN_KEY) === "true"
+          : false;
       setPinOk(isSessionPinOk);
       setPinCodeState(get<string | null>(KEYS.pinCode, null));
       setRealName(get<string | null>(KEYS.realName, null));
@@ -122,7 +148,7 @@ export function useAuth() {
             data[row.key] = row.value;
           }
           initStorageData(uid, data);
-          
+
           // CRITICAL: Update states after fetching so we don't stay null
           setUsername(data[KEYS.username] || null);
           setRealName(data[KEYS.realName] || null);
@@ -130,15 +156,20 @@ export function useAuth() {
           setHash(data[KEYS.hash] || null);
           setDeviceId(data[KEYS.deviceId] || null);
           setFingerprint(data[KEYS.fingerprint] || null);
-          
+
           const userDataChannel = `user-data-sync-${uid}-${crypto.randomUUID()}`;
-          supabase.channel(userDataChannel)
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'user_data', filter: `user_id=eq.${uid}` }, (payload) => {
-              const newData = payload.new as any;
-              if (newData && newData.key !== undefined && newData.value !== undefined) {
-                setLocal(newData.key, newData.value);
-              }
-            })
+          supabase
+            .channel(userDataChannel)
+            .on(
+              "postgres_changes",
+              { event: "*", schema: "public", table: "user_data", filter: `user_id=eq.${uid}` },
+              (payload) => {
+                const newData = payload.new as any;
+                if (newData && newData.key !== undefined && newData.value !== undefined) {
+                  setLocal(newData.key, newData.value);
+                }
+              },
+            )
             .subscribe();
         } catch (err) {
           console.error("Failed to fetch user data", err);
@@ -252,8 +283,8 @@ export function useAuth() {
       const newDeviceId = crypto.randomUUID();
       const newFingerprint = btoa(
         (typeof navigator !== "undefined" ? navigator.userAgent : "") +
-        (typeof window !== "undefined" ? window.screen.width + window.screen.height : 0) +
-        newDeviceId,
+          (typeof window !== "undefined" ? window.screen.width + window.screen.height : 0) +
+          newDeviceId,
       ).slice(0, 32);
 
       set(KEYS.hash, hashHex);

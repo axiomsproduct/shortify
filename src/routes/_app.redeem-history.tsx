@@ -78,10 +78,10 @@ function RedeemHistoryPage() {
   // Quick stats
   const totalRupees = history.reduce(
     (acc, cur) => acc + (Number(cur.amount_inr) || (cur.cost / 1000) * 10),
-    0
+    0,
   );
   const pendingCount = history.filter(
-    (r) => !r.status || r.status.toLowerCase() === "pending"
+    (r) => !r.status || r.status.toLowerCase() === "pending",
   ).length;
 
   return (
@@ -140,9 +140,7 @@ function RedeemHistoryPage() {
             <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-charcoal/60 dark:text-cream/60">
               pending review
             </div>
-            <div className="mt-1 font-display text-2xl sm:text-3xl text-marker">
-              {pendingCount}
-            </div>
+            <div className="mt-1 font-display text-2xl sm:text-3xl text-marker">{pendingCount}</div>
           </div>
         </section>
       )}
@@ -165,8 +163,8 @@ function RedeemHistoryPage() {
               no redemptions yet
             </h2>
             <p className="mt-2 max-w-sm text-sm text-charcoal/70 dark:text-cream/70 leading-relaxed">
-              you haven't requested any payouts yet. earn coins by watching reels and redeem them for
-              cash rewards!
+              you haven't requested any payouts yet. earn coins by watching reels and redeem them
+              for cash rewards!
             </p>
             <Link to="/redeem" className="btn-pill mt-6">
               redeem your coins

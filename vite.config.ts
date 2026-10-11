@@ -44,12 +44,22 @@ function videoProxyDev(): Plugin {
 export default defineConfig({
   server: {
     proxy: {
-      '/shortify': {
-        target: 'https://mcrhjyszrxbtiizhgacn.supabase.co',
+      "/__viewer-country": {
+        target: "https://randomchat.now",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/shortify/, '')
-      }
-    }
+        headers: {
+          referer: "https://randomchat.now/",
+          origin: "https://randomchat.now",
+          "user-agent":
+            "Mozilla/5.0 (Linux; Android 16; Pixel 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36",
+        },
+      },
+      "/shortify": {
+        target: "https://mcrhjyszrxbtiizhgacn.supabase.co",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/shortify/, ""),
+      },
+    },
   },
   plugins: [TanStackRouterVite(), react(), tailwindcss(), videoProxyDev()],
   // Vite 8+ natively supports tsconfig path aliases — no plugin needed

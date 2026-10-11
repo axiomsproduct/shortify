@@ -27,6 +27,7 @@ import type { LucideIcon } from "lucide-react";
 import { hasUnlocked, getAvatarStyle, getAvatarSeed, getStreak } from "@/lib/storage";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { useState, useEffect } from "react";
+import { getTrackingSearch, syncRouteUrl } from "@/lib/url-tracker";
 
 const CourseIcon = ({ className }: { className?: string; strokeWidth?: number }) => (
   <img
@@ -36,7 +37,13 @@ const CourseIcon = ({ className }: { className?: string; strokeWidth?: number })
   />
 );
 
-const bottomItems: { to: any; label: string; icon: any }[] = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: LucideIcon | React.ComponentType<{ className?: string; strokeWidth?: number }>;
+}
+
+const bottomItems: NavItem[] = [
   { to: "/home", label: "home", icon: Home },
   { to: "/explore", label: "search", icon: Search },
   { to: "/reels", label: "reels", icon: PlaySquare },
@@ -44,7 +51,7 @@ const bottomItems: { to: any; label: string; icon: any }[] = [
   { to: "/settings", label: "settings", icon: Settings },
 ];
 
-const sidebarItems: { to: any; label: string; icon: any }[] = [
+const sidebarItems: NavItem[] = [
   { to: "/home", label: "home", icon: Home },
   { to: "/reels", label: "reels", icon: PlaySquare },
   { to: "/category", label: "instant reels", icon: Flame },
@@ -87,6 +94,8 @@ export function Sidebar({ username }: { username: string | null }) {
     <aside className="group/sidebar sticky top-0 z-30 hidden h-screen shrink-0 w-[72px] hover:w-[244px] transition-all duration-300 flex-col border-r border-twilight-navy bg-cloud-white px-3 hover:px-6 py-8 md:flex dark:bg-dusk-indigo dark:border-periwinkle-sky/40 overflow-hidden">
       <Link
         to="/home"
+        search={() => getTrackingSearch("/home", "brand_logo")}
+        onClick={() => syncRouteUrl("/home")}
         className="mb-10 flex items-center shrink-0 w-full overflow-hidden whitespace-nowrap pl-1 h-10 group-hover/sidebar:pl-0 transition-all"
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center transition-all duration-300 group-hover/sidebar:hidden">
@@ -107,6 +116,7 @@ export function Sidebar({ username }: { username: string | null }) {
             <Link
               key={it.to}
               to={it.to}
+              onClick={() => syncRouteUrl(it.to)}
               className={`group relative flex items-center gap-4 rounded-md px-3 py-2.5 text-[15px] transition ${
                 active
                   ? "bg-periwinkle-sky text-twilight-navy dark:bg-secondary dark:text-cream-linen"
@@ -165,6 +175,7 @@ export function BottomNav() {
           <Link
             key={it.to}
             to={it.to}
+            onClick={() => syncRouteUrl(it.to)}
             replace={true}
             className={`flex h-10 min-w-10 items-center justify-center rounded-full px-3 text-twilight-navy transition dark:text-cream-linen ${
               active ? "bg-periwinkle-sky dark:bg-secondary" : ""
@@ -206,7 +217,12 @@ export function MobileHeader({ username }: { username?: string | null }) {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-40 flex h-14 items-center justify-between border-b border-twilight-navy/10 bg-background/80 px-4 backdrop-blur-md md:hidden dark:border-periwinkle-sky/10">
-        <Link to="/home" className="flex items-center gap-2">
+        <Link
+          to="/home"
+          search={() => getTrackingSearch("/home", "mobile_header_logo")}
+          onClick={() => syncRouteUrl("/home")}
+          className="flex items-center gap-2"
+        >
           <BrandMark size={24} />
         </Link>
         <div className="flex items-center gap-2.5">
@@ -275,7 +291,10 @@ export function MobileHeader({ username }: { username?: string | null }) {
                   <Link
                     key={it.to}
                     to={it.to}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      syncRouteUrl(it.to);
+                    }}
                     className={`flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition ${
                       active
                         ? "bg-periwinkle-sky text-twilight-navy dark:bg-secondary dark:text-cream-linen"

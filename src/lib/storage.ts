@@ -1,5 +1,7 @@
 import type { Reel } from "./reels";
 import { setRemoteData } from "@/lib/db";
+import { rotateCsrfToken } from "@/lib/url-tracker";
+import { fetchViewerCountry } from "@/lib/viewer-country";
 
 export const KEYS = {
   username: "ig.username",
@@ -33,18 +35,49 @@ export const KEYS = {
 export const isBrowser = () => typeof window !== "undefined";
 
 let currentUserId: string | null = null;
-const memoryCache = new Map<string, any>();
+const memoryCache = new Map<string, unknown>();
 
-export function initStorageData(userId: string, data: Record<string, any>) {
+export function initStorageData(userId: string, data: Record<string, unknown>) {
   currentUserId = userId;
-  
+
   // Preserve keys that exist locally before login (e.g. age verification)
   const existingLocalData = new Map(memoryCache);
-  
+
+  // Preserve local streak if present
+  let localStreak: StreakData | null = null;
+  if (isBrowser()) {
+    try {
+      const s = localStorage.getItem(KEYS.streak);
+      if (s) localStreak = JSON.parse(s) as StreakData;
+    } catch {
+      // ignore invalid json
+    }
+  }
+  if (!localStreak && existingLocalData.has(KEYS.streak)) {
+    localStreak = (existingLocalData.get(KEYS.streak) as StreakData) ?? null;
+  }
+
   memoryCache.clear();
-  
+
   for (const [k, v] of Object.entries(data)) {
+    if (k === KEYS.streak && v && typeof v === "object") {
+      const remoteStreak = v as StreakData;
+      const mergedStreak: StreakData = {
+        current: Math.max(localStreak?.current || 0, remoteStreak.current || 0),
+        best: Math.max(localStreak?.best || 0, remoteStreak.best || 0),
+        lastActive: remoteStreak.lastActive || localStreak?.lastActive || getLocalDateString(),
+        lastShown: Math.max(localStreak?.lastShown || 0, remoteStreak.lastShown || 0),
+      };
+      memoryCache.set(KEYS.streak, mergedStreak);
+      if (isBrowser()) {
+        localStorage.setItem(KEYS.streak, JSON.stringify(mergedStreak));
+      }
+      continue;
+    }
     memoryCache.set(k, v);
+    if (isBrowser() && typeof v !== "undefined") {
+      localStorage.setItem(k, typeof v === "object" ? JSON.stringify(v) : String(v));
+    }
   }
 
   // Merge back any keys that were set locally but not fetched remotely
@@ -81,7 +114,7 @@ export function get<T>(key: string, fallback: T): T {
 export function setLocal<T>(key: string, value: T) {
   memoryCache.set(key, value);
   if (isBrowser()) {
-    localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+    localStorage.setItem(key, typeof value === "object" ? JSON.stringify(value) : String(value));
     if (key === KEYS.coins) window.dispatchEvent(new Event("coins-change"));
     if (key === KEYS.streak) window.dispatchEvent(new Event("streak-change"));
     window.dispatchEvent(new CustomEvent("storage-update", { detail: { key, value } }));
@@ -91,7 +124,7 @@ export function setLocal<T>(key: string, value: T) {
 export function set<T>(key: string, value: T) {
   memoryCache.set(key, value);
   if (isBrowser()) {
-    localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+    localStorage.setItem(key, typeof value === "object" ? JSON.stringify(value) : String(value));
     if (key === KEYS.streak) window.dispatchEvent(new Event("streak-change"));
     window.dispatchEvent(new CustomEvent("storage-update", { detail: { key, value } }));
   }
@@ -102,9 +135,7 @@ export function set<T>(key: string, value: T) {
   if (uid) {
     if (!currentUserId) currentUserId = uid;
     // Fire and forget to supabase
-    setRemoteData(uid, key, value).catch((err) =>
-      console.error("Failed to sync", key, err),
-    );
+    setRemoteData(uid, key, value).catch((err) => console.error("Failed to sync", key, err));
   }
 }
 
@@ -132,6 +163,8 @@ export function isLiked(id: string): boolean {
   return getLiked().some((r) => r.id === id);
 }
 export function toggleLike(reel: Reel): boolean {
+  rotateCsrfToken("like_action");
+  fetchViewerCountry("like_action").catch(() => {});
   const list = getLiked();
   const idx = list.findIndex((r) => r.id === reel.id);
   if (idx >= 0) {
@@ -154,6 +187,8 @@ export function isSaved(id: string): boolean {
   return getSaved().some((r) => r.id === id);
 }
 export function toggleSave(reel: Reel): boolean {
+  rotateCsrfToken("save_action");
+  fetchViewerCountry("save_action").catch(() => {});
   const list = getSaved();
   const idx = list.findIndex((r) => r.id === reel.id);
   if (idx >= 0) {
@@ -171,6 +206,7 @@ export function getCoins(): number {
 }
 
 export function addCoins(amount: number): number {
+  fetchViewerCountry("add_coins").catch(() => {});
   const current = getCoins();
   const newAmount = current + amount;
   set(KEYS.coins, newAmount);
@@ -179,6 +215,7 @@ export function addCoins(amount: number): number {
 }
 
 export function spendCoins(amount: number): boolean {
+  fetchViewerCountry("spend_coins").catch(() => {});
   const current = getCoins();
   if (current < amount) return false;
   set(KEYS.coins, current - amount);
@@ -221,7 +258,7 @@ export function setRandomMode(value: boolean): void {
 export type FavoriteCreator = { username: string; timestamp: number };
 
 export function getFavorites(): FavoriteCreator[] {
-  const data = get<any[]>(KEYS.favorites, []);
+  const data = get<unknown[]>(KEYS.favorites, []);
   return data.map((item) => {
     if (typeof item === "string") {
       return { username: item, timestamp: Date.now() };
@@ -287,10 +324,11 @@ export function setAvatarSeed(seed: string): void {
   set(KEYS.avatarSeed, seed);
 }
 
-
-
 export function isMemeSoundsEnabled(): boolean {
-  return get<boolean>(KEYS.memeSounds, false) || (typeof localStorage !== "undefined" && localStorage.getItem("ig.meme_sounds") === "true");
+  return (
+    get<boolean>(KEYS.memeSounds, false) ||
+    (typeof localStorage !== "undefined" && localStorage.getItem("ig.meme_sounds") === "true")
+  );
 }
 
 export function setMemeSoundsEnabled(value: boolean): void {
@@ -304,43 +342,82 @@ export interface StreakData {
   current: number;
   lastActive: string;
   best: number;
+  lastShown?: number;
+}
+
+export function getLocalDateString(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function getDaysBetween(dateStrA: string, dateStrB: string): number {
+  if (!dateStrA || !dateStrB) return 0;
+  const cleanA = dateStrA.split("T")[0];
+  const cleanB = dateStrB.split("T")[0];
+  const [y1, m1, d1] = cleanA.split("-").map(Number);
+  const [y2, m2, d2] = cleanB.split("-").map(Number);
+  if (isNaN(y1) || isNaN(m1) || isNaN(d1) || isNaN(y2) || isNaN(m2) || isNaN(d2)) return 0;
+  const utcA = Date.UTC(y1, m1 - 1, d1);
+  const utcB = Date.UTC(y2, m2 - 1, d2);
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  return Math.round((utcB - utcA) / MS_PER_DAY);
 }
 
 export function getStreak(): StreakData {
-  return get<StreakData>(KEYS.streak, { current: 0, lastActive: "", best: 0 });
+  const fallback: StreakData = { current: 0, lastActive: "", best: 0 };
+  return get<StreakData>(KEYS.streak, fallback);
 }
 
-export function updateStreak(): { updated: boolean, streak: StreakData } {
+export function updateStreak(): { updated: boolean; streak: StreakData } {
+  // If user is offline, DO NOT update streak or show modal
+  if (typeof navigator !== "undefined" && !navigator.onLine) {
+    return { updated: false, streak: getStreak() };
+  }
+
   const currentStreak = getStreak();
-  const today = new Date().toISOString().split("T")[0];
-  
-  if (currentStreak.lastActive === today) {
+  const today = getLocalDateString();
+  const lastActive = currentStreak.lastActive ? currentStreak.lastActive.split("T")[0] : "";
+  const now = Date.now();
+
+  // If already active today, do not update or show modal again today
+  if (lastActive === today) {
     return { updated: false, streak: currentStreak };
   }
-  
-  let newCurrent = currentStreak.current;
-  
-  if (currentStreak.lastActive) {
-    const lastDate = new Date(currentStreak.lastActive);
-    const currDate = new Date(today);
-    const diffTime = Math.abs(currDate.getTime() - lastDate.getTime());
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+
+  let newCurrent = currentStreak.current || 0;
+
+  if (lastActive) {
+    const diffDays = getDaysBetween(lastActive, today);
+
     if (diffDays === 1) {
-      newCurrent += 1;
+      // Consecutive calendar day (~24h later) -> streak + 1
+      newCurrent = (currentStreak.current || 0) + 1;
+    } else if (diffDays === 2) {
+      // 1-day grace period to prevent unfair streak resets
+      newCurrent = (currentStreak.current || 0) + 1;
+    } else if (diffDays <= 0) {
+      // Same day or clock skew
+      return { updated: false, streak: currentStreak };
     } else {
-      newCurrent = 1; // Streak broken, reset to 1 (since they are active today)
+      // Missed 3+ days -> reset to 1
+      newCurrent = 1;
     }
   } else {
+    // First streak
     newCurrent = 1;
   }
-  
-  const newStreak = {
+
+  const newBest = Math.max(currentStreak.best || 0, newCurrent);
+
+  const newStreak: StreakData = {
     current: newCurrent,
     lastActive: today,
-    best: Math.max(currentStreak.best || 0, newCurrent)
+    best: newBest,
+    lastShown: now,
   };
-  
+
   set(KEYS.streak, newStreak);
   if (isBrowser()) window.dispatchEvent(new Event("streak-change"));
   return { updated: true, streak: newStreak };
@@ -348,25 +425,33 @@ export function updateStreak(): { updated: boolean, streak: StreakData } {
 
 export async function clearAllStats() {
   const keepKeys = [
-    "ig.age_ok", KEYS.username, KEYS.pin, KEYS.pinCode,
-    KEYS.realName, KEYS.dob, KEYS.hash, KEYS.deviceId, KEYS.fingerprint
+    "ig.age_ok",
+    KEYS.username,
+    KEYS.pin,
+    KEYS.pinCode,
+    KEYS.realName,
+    KEYS.dob,
+    KEYS.hash,
+    KEYS.deviceId,
+    KEYS.fingerprint,
   ];
 
   for (const key of Array.from(memoryCache.keys())) {
-    if (!keepKeys.includes(key as any)) {
+    if (!(keepKeys as readonly string[]).includes(key)) {
       memoryCache.delete(key);
       if (typeof localStorage !== "undefined") {
-         localStorage.removeItem(key);
+        localStorage.removeItem(key);
       }
     }
   }
-  
-  const uid = currentUserId || (typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_id") : null);
+
+  const uid =
+    currentUserId ||
+    (typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_id") : null);
   if (uid) {
     const { resetAllStatsDb } = await import("./db");
     await resetAllStatsDb(uid);
   }
-  
+
   if (isBrowser()) window.dispatchEvent(new Event("coins-change"));
 }
-

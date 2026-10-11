@@ -20,9 +20,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@satyamrojhax'
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@satyamrojhax"
 
       - name: Update npm to latest
         run: npm install -g npm@latest

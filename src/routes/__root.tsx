@@ -1,9 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRouteWithContext,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { NotFoundComponent } from "@/components/not-found";
+import { syncRouteUrl, initGlobalActionTracking } from "@/lib/url-tracker";
 
-function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   const router = useRouter();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -34,8 +41,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useRouterState({
+    select: (s) => ({
+      pathname: s.location.pathname,
+      searchStr: s.location.searchStr,
+      href: s.location.href,
+    }),
+  });
 
   useEffect(() => {
+    syncRouteUrl(location.pathname);
+  }, [location.pathname, location.searchStr, location.href]);
+
+  useEffect(() => {
+    initGlobalActionTracking();
     if ("serviceWorker" in navigator && typeof window !== "undefined") {
       navigator.serviceWorker.register("/sw.js").catch((error) => {
         console.error("Service worker registration failed:", error);

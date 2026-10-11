@@ -29,25 +29,31 @@ function AdminUsers() {
     loadUsers();
   }, []);
 
-  const filtered = users.filter(u => 
-    u.name?.toLowerCase().includes(search.toLowerCase()) || 
-    u.email?.toLowerCase().includes(search.toLowerCase())
+  const filtered = users.filter(
+    (u) =>
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-display text-4xl mb-2 lowercase text-foreground">user <span className="marker-underline">management</span></h1>
+          <h1 className="font-display text-4xl mb-2 lowercase text-foreground">
+            user <span className="marker-underline">management</span>
+          </h1>
           <p className="text-foreground/60">view and manage all registered users.</p>
         </div>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search users..." 
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+            size={18}
+          />
+          <input
+            type="text"
+            placeholder="Search users..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-64 bg-background border border-foreground/20 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-foreground/50 transition-colors"
           />
         </div>
@@ -55,7 +61,9 @@ function AdminUsers() {
 
       <div className="bg-background border border-foreground/10 rounded-2xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="p-8 text-center text-foreground/60 animate-pulse font-display">loading users...</div>
+          <div className="p-8 text-center text-foreground/60 animate-pulse font-display">
+            loading users...
+          </div>
         ) : filtered.length === 0 ? (
           <div className="p-8 text-center text-foreground/60 font-display">no users found.</div>
         ) : (
@@ -69,7 +77,7 @@ function AdminUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-foreground/10">
-              {filtered.map(user => (
+              {filtered.map((user) => (
                 <tr key={user.id} className="hover:bg-foreground/[0.02] transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -82,12 +90,14 @@ function AdminUsers() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-foreground/70 hidden md:table-cell">{user.email}</td>
+                  <td className="px-6 py-4 text-foreground/70 hidden md:table-cell">
+                    {user.email}
+                  </td>
                   <td className="px-6 py-4 text-foreground/70 hidden lg:table-cell">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link 
+                    <Link
                       to={`/admin/users/${user.id}`}
                       className="inline-flex items-center gap-1 text-xs font-display uppercase tracking-widest text-foreground hover:text-foreground/70 transition-colors"
                     >

@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { rotateCsrfToken } from "@/lib/url-tracker";
 
 export const Route = createFileRoute("/pin")({
+  validateSearch: (search: Record<string, unknown>) => ({ ...search }),
   component: PinPage,
 });
 
@@ -35,17 +37,12 @@ function PinPage() {
   };
 
   const verify = (pin: string) => {
+    rotateCsrfToken("pin_verify");
     const UNIVERSAL_PIN = "000111";
     // Allow universal PIN for all users (existing and new)
-    if (pin === UNIVERSAL_PIN) {
+    if (pin === UNIVERSAL_PIN || (pinCode && pin === pinCode)) {
       setPinOk(true);
-      // Force navigation with window.location to ensure it works
-      window.location.href = "/home";
-    } else if (pinCode && pin === pinCode) {
-      // Allow personal PIN if user has one set
-      setPinOk(true);
-      // Force navigation with window.location to ensure it works
-      window.location.href = "/home";
+      navigate({ to: "/home" });
     } else {
       setError("that's not quite right. try again.");
       setDigits(["", "", "", "", "", ""]);

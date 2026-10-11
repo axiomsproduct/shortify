@@ -1,4 +1,4 @@
-import { secureMathRandom } from '@/lib/utils';
+import { secureMathRandom } from "@/lib/utils";
 import { getRandomMode } from "./storage";
 import { videoCache } from "./video-cache";
 
@@ -105,7 +105,9 @@ let catalogPromise: Promise<Reel[]> | null = null;
  */
 export function getLocalCatalog(): Promise<Reel[]> {
   if (typeof navigator !== "undefined" && !navigator.onLine) {
-    return Promise.reject(new Error("You're offline. Connect to the internet once to load the database."));
+    return Promise.reject(
+      new Error("You're offline. Connect to the internet once to load the database."),
+    );
   }
   if (!catalogPromise) {
     catalogPromise = fetch("/assets/v1-reels-db.json")
@@ -525,4 +527,3 @@ export async function fetchCreatorReelsPage(
     throw new Error("Error parsing creator reels");
   }
 }
-

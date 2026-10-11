@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
       gcTime: 30 * 60_000,
       // Only retry network errors, not 4xx client errors
       retry: (failureCount, error) => {
-        const status = (error as any)?.status ?? 0;
+        const status = (error as { status?: number })?.status ?? 0;
         if (status >= 400 && status < 500 && status !== 429) return false;
         return failureCount < 3;
       },

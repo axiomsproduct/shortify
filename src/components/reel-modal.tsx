@@ -287,7 +287,11 @@ export function ReelModal({
           >
             <video
               ref={videoRef}
-              src={reel.videoUrl?.startsWith("http") || reel.videoUrl?.startsWith("/") ? reel.videoUrl : "about:blank"}
+              src={
+                reel.videoUrl?.startsWith("http") || reel.videoUrl?.startsWith("/")
+                  ? reel.videoUrl
+                  : "about:blank"
+              }
               poster={reel.thumbnail}
               className="w-full h-full object-contain md:object-cover"
               autoPlay

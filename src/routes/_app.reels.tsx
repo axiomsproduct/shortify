@@ -36,13 +36,14 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-type ReelsSearch = { start?: string; tabs?: FeedFilter };
+type ReelsSearch = { start?: string; tabs?: FeedFilter; [key: string]: unknown };
 
 /** How many pages we keep in memory before evicting old ones from the front. */
 const MAX_PAGES = 6;
 
 export const Route = createFileRoute("/_app/reels")({
   validateSearch: (s: Record<string, unknown>): ReelsSearch => ({
+    ...s,
     start: typeof s.start === "string" ? s.start : undefined,
     tabs: typeof s.tabs === "string" ? (s.tabs as FeedFilter) : undefined,
   }),
@@ -331,7 +332,6 @@ function ReelsPage() {
     <div className="relative h-[100dvh] w-full bg-background overflow-hidden">
       {/* Unified Top Header for Coins & Categories */}
       <div className="absolute left-0 right-0 top-4 z-30 flex w-full items-center justify-between px-4 md:top-6 md:px-6 pointer-events-none">
-        
         {/* Coins display */}
         <div className="flex items-center gap-2 rounded-full bg-background/80 border border-border/50 px-3 py-1.5 backdrop-blur pointer-events-auto shadow-sm">
           <Coins className="h-4 w-4 md:h-5 md:w-5 text-yellow-500" />

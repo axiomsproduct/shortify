@@ -26,7 +26,7 @@ import {
   Eye,
   EyeOff,
   Coins,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/profile")({
@@ -37,7 +37,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const { username } = useAuth();
   const hydrated = useHydrated();
-  
+
   const [showPin, setShowPin] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
   const [savedCount, setSavedCount] = useState(0);
@@ -70,7 +70,7 @@ function ProfilePage() {
     const uid = typeof localStorage !== "undefined" ? localStorage.getItem("ig.user_id") : null;
     if (uid) {
       fetchUserProfile(uid)
-        .then(data => {
+        .then((data) => {
           setEmail(data.email || "");
           setPassword(data.password || "");
         })
@@ -101,7 +101,7 @@ function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
-      <button 
+      <button
         onClick={() => navigate({ to: "/settings" })}
         className="flex items-center gap-2 text-charcoal/60 hover:text-cocoa dark:text-cream/60 dark:hover:text-cream transition mb-6 font-display text-sm lowercase"
       >
@@ -142,7 +142,11 @@ function ProfilePage() {
             <div className="mt-2 text-sm text-charcoal/60 dark:text-cream/60 flex items-center justify-center sm:justify-start gap-1.5">
               <span>dropped from universe</span>
               <span>•</span>
-              <span className="flex items-center text-orange-500 font-bold">
+              <span
+                onClick={() => window.dispatchEvent(new Event("open-streak-modal"))}
+                className="flex items-center text-orange-500 font-bold cursor-pointer hover:opacity-80 transition"
+                title="View streak details"
+              >
                 <Flame className="h-4 w-4 mr-0.5" /> {streak} day streak
               </span>
             </div>
@@ -200,7 +204,7 @@ function ProfilePage() {
                 login username
               </div>
               <div className="mt-0.5 font-mono text-base text-cocoa dark:text-cream">
-                {email ? email.split('@')[0] : "loading..."}
+                {email ? email.split("@")[0] : "loading..."}
               </div>
             </div>
           </div>

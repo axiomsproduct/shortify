@@ -10,7 +10,7 @@ const proxyUrl = import.meta.env.VITE_SUPABASE_URL || "/shortify";
 
 // To prevent logging out existing users from when the proxy was used, we keep the old storage key.
 const legacyHostname = typeof window !== "undefined" ? window.location.hostname : "localhost";
-const storageKey = `sb-${legacyHostname.split('.')[0]}-auth-token`;
+const storageKey = `sb-${legacyHostname.split(".")[0]}-auth-token`;
 
 const getSupabaseClient = () => {
   return createClient(supabaseUrl, supabaseAnonKey, {
@@ -25,8 +25,8 @@ const getSupabaseClient = () => {
           return fetch(input.href.replace(supabaseUrl, proxyUrl), init);
         }
         return fetch(input, init);
-      }
-    }
+      },
+    },
   });
 };
 

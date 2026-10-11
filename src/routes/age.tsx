@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { rotateCsrfToken } from "@/lib/url-tracker";
 
 export const Route = createFileRoute("/age")({
+  validateSearch: (search: Record<string, unknown>) => ({ ...search }),
   component: AgePage,
 });
 
@@ -43,6 +45,7 @@ function AgePage() {
           <button
             onClick={() => {
               confirmAge();
+              rotateCsrfToken("age_confirmed");
               navigate({ to: "/login" });
             }}
             className="btn-pill"

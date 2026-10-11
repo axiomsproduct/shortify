@@ -7,12 +7,13 @@ import { KEYS, get, set, getCoins, getAutoScroll, getLiked, getSaved } from "@/l
 import { useVideoPrewarmer } from "@/hooks/use-video-prewarmer";
 import { AlertTriangle, RefreshCw, Coins, ChevronUp, ChevronDown } from "lucide-react";
 
-type CategorySearch = { c?: string; start?: string };
+type CategorySearch = { c?: string; start?: string; [key: string]: unknown };
 
 const MAX_PAGES = 6;
 
 export const Route = createFileRoute("/_app/category")({
   validateSearch: (s: Record<string, unknown>): CategorySearch => ({
+    ...s,
     c: typeof s.c === "string" ? s.c : undefined,
     start: typeof s.start === "string" ? s.start : undefined,
   }),
@@ -38,8 +39,6 @@ function CategoryPage() {
     window.addEventListener("coins-change", handleCoinsChange);
     return () => window.removeEventListener("coins-change", handleCoinsChange);
   }, []);
-
-
 
   const {
     data,

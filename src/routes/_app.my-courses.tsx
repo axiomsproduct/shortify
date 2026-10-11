@@ -131,7 +131,11 @@ function MyCoursesPage() {
                     >
                       {imageUrl ? (
                         <img
-                          src={DOMPurify.sanitize(imageUrl?.startsWith("http") || imageUrl?.startsWith("/") ? imageUrl : "about:blank")}
+                          src={DOMPurify.sanitize(
+                            imageUrl?.startsWith("http") || imageUrl?.startsWith("/")
+                              ? imageUrl
+                              : "about:blank",
+                          )}
                           alt={course.title}
                           className="h-full w-full object-cover"
                           loading="lazy"

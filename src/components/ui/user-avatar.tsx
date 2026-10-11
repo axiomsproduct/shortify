@@ -52,11 +52,11 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
         showBorder ? "border-[1.5px] border-twilight-navy/20 dark:border-cream-linen/20" : ""
       } ${sizeClass} ${className}`}
     >
-      {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-muted/60" />
-      )}
+      {!loaded && <div className="absolute inset-0 animate-pulse bg-muted/60" />}
       <img
-        src={DOMPurify.sanitize(imageUrl?.startsWith("http") || imageUrl?.startsWith("/") ? imageUrl : "about:blank")}
+        src={DOMPurify.sanitize(
+          imageUrl?.startsWith("http") || imageUrl?.startsWith("/") ? imageUrl : "about:blank",
+        )}
         alt={alt || username || name || "User avatar"}
         className={`h-full w-full object-cover transition-opacity duration-200 ${
           loaded ? "opacity-100" : "opacity-0"

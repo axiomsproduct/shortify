@@ -2,10 +2,14 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { BrandMark } from "@/components/nav";
+import { rotateCsrfToken } from "@/lib/url-tracker";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>): { admin?: boolean } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { admin?: boolean; [key: string]: unknown } => {
     return {
+      ...search,
       admin: search.admin === "true" || search.admin === true,
     };
   },
@@ -39,6 +43,7 @@ function LoginPage() {
 
     setLoading(true);
     setErrorMsg("");
+    rotateCsrfToken("auth_submit");
     try {
       if (mode === "signup") {
         if (admin) throw new Error("Cannot sign up as admin.");
@@ -55,9 +60,9 @@ function LoginPage() {
           navigate({ to: pin ? "/pin" : "/pin-setup" });
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setErrorMsg(err.message || "Failed to authenticate");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to authenticate");
     } finally {
       setLoading(false);
     }
@@ -70,7 +75,7 @@ function LoginPage() {
       setUsernameAvailable(null);
       return;
     }
-    
+
     const handle = userHandle.trim().toLowerCase();
     setCheckingUsername(true);
     const timer = setTimeout(async () => {
@@ -184,7 +189,12 @@ function LoginPage() {
           </label>
           <button
             type="submit"
-            disabled={loading || !userHandle.trim() || !password.trim() || (isSignup && (!name.trim() || usernameAvailable === false))}
+            disabled={
+              loading ||
+              !userHandle.trim() ||
+              !password.trim() ||
+              (isSignup && (!name.trim() || usernameAvailable === false))
+            }
             className="btn-pill"
           >
             {loading ? "loading..." : "continue →"}

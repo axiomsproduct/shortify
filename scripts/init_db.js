@@ -1,5 +1,7 @@
 import { loadEnvFile } from "node:process";
-try { loadEnvFile(); } catch (e) {}
+try {
+  loadEnvFile();
+} catch (e) {}
 
 import pkg from "pg";
 const { Client } = pkg;

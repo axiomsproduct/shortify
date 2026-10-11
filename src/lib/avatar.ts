@@ -25,7 +25,7 @@ export const DEFAULT_AVATAR_STYLE: DiceBearStyle = "avataaars";
 export function getDiceBearAvatar(
   seed: string,
   style: string = DEFAULT_AVATAR_STYLE,
-  options?: { backgroundColor?: string }
+  options?: { backgroundColor?: string },
 ): string {
   const safeSeed = encodeURIComponent(seed?.trim() || "user");
   const bg = options?.backgroundColor ?? "b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf";
@@ -38,7 +38,7 @@ export function getDiceBearAvatar(
 export function getUserAvatarUrl(
   username?: string | null,
   customSeed?: string | null,
-  style?: string | null
+  style?: string | null,
 ): string {
   const seed = customSeed || username || "user";
   const avatarStyle = style || DEFAULT_AVATAR_STYLE;

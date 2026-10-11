@@ -22,7 +22,7 @@ function LeaderboardPage() {
 
   useEffect(() => {
     if (!hydrated) return;
-    
+
     async function fetchLeaderboard() {
       try {
         const response = await fetch("https://loveupload.viraly.wtf/leaderboard/top-monthly-views");
@@ -37,7 +37,7 @@ function LeaderboardPage() {
         setLoading(false);
       }
     }
-    
+
     fetchLeaderboard();
   }, [hydrated]);
 
@@ -57,14 +57,17 @@ function LeaderboardPage() {
 
       {loading ? (
         <div className="animate-pulse space-y-4">
-          {[1, 2, 3, 4, 5].map(i => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-20 bg-charcoal/10 rounded-2xl dark:bg-cream/10" />
           ))}
         </div>
       ) : (
         <div className="space-y-3 md:space-y-4">
           {items.map((item, i) => (
-            <div key={item.username} className="paper-card flex items-center gap-3 md:gap-4 p-3 sm:p-4 md:p-6 transition hover:-translate-y-1">
+            <div
+              key={item.username}
+              className="paper-card flex items-center gap-3 md:gap-4 p-3 sm:p-4 md:p-6 transition hover:-translate-y-1"
+            >
               <div className="w-10 md:w-12 text-center flex-shrink-0">
                 {item.rank === 1 ? (
                   <Medal className="h-8 w-8 md:h-10 md:w-10 mx-auto text-yellow-500" />
@@ -73,17 +76,24 @@ function LeaderboardPage() {
                 ) : item.rank === 3 ? (
                   <Medal className="h-6 w-6 md:h-8 md:w-8 mx-auto text-amber-600" />
                 ) : (
-                  <span className="font-display text-xl md:text-2xl text-charcoal/40 dark:text-cream/40">#{item.rank}</span>
+                  <span className="font-display text-xl md:text-2xl text-charcoal/40 dark:text-cream/40">
+                    #{item.rank}
+                  </span>
                 )}
               </div>
-              
-              <Link to="/creator/$username" params={{ username: item.username }} className="flex items-center gap-3 md:gap-4 flex-1 group min-w-0">
-                <img 
-                  src={`https://love.viraly.wtf/profileImages/${item.username}.jpg`} 
+
+              <Link
+                to="/creator/$username"
+                params={{ username: item.username }}
+                className="flex items-center gap-3 md:gap-4 flex-1 group min-w-0"
+              >
+                <img
+                  src={`https://love.viraly.wtf/profileImages/${item.username}.jpg`}
                   alt={item.username}
                   className="h-12 w-12 md:h-14 md:w-14 rounded-full object-cover border-[1.5px] border-charcoal/20 dark:border-cream/20 group-hover:border-marker transition shrink-0"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://api.dicebear.com/9.x/avataaars/svg?seed=${item.username}`;
+                    (e.target as HTMLImageElement).src =
+                      `https://api.dicebear.com/9.x/avataaars/svg?seed=${item.username}`;
                   }}
                 />
                 <div className="flex flex-col min-w-0">
@@ -96,17 +106,18 @@ function LeaderboardPage() {
                   </span>
                 </div>
               </Link>
-              
+
               <div className="flex flex-col md:flex-row items-end md:items-center gap-1 md:gap-8 flex-shrink-0">
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-1 md:gap-1.5 text-cocoa dark:text-cream font-display text-lg md:text-xl">
-                    {item.totalMonthlyViews.toLocaleString()} <Eye className="h-3.5 w-3.5 md:h-4 md:w-4 text-marker" />
+                    {item.totalMonthlyViews.toLocaleString()}{" "}
+                    <Eye className="h-3.5 w-3.5 md:h-4 md:w-4 text-marker" />
                   </div>
                   <div className="text-[8px] md:text-[10px] uppercase tracking-widest text-charcoal/50 dark:text-cream/50 mt-0.5 md:mt-1">
                     monthly views
                   </div>
                 </div>
-                
+
                 <div className="text-right hidden sm:block opacity-60">
                   <div className="flex items-center justify-end gap-1.5 text-cocoa dark:text-cream font-display text-base md:text-lg">
                     {item.totalAllTimeViews.toLocaleString()}

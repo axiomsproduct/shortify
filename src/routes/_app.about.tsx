@@ -47,7 +47,8 @@ function AboutPage() {
             Shortify
           </h1>
           <p className="mt-1 text-base text-charcoal/70 dark:text-cream/70 max-w-xl">
-            welcome to shortify. come for the reels, stay because you accidentally learned english and picked up 3 new skills.
+            welcome to shortify. come for the reels, stay because you accidentally learned english
+            and picked up 3 new skills.
           </p>
         </div>
       </div>
@@ -90,7 +91,11 @@ function AboutPage() {
             </h2>
           </div>
           <p className="text-sm sm:text-base text-charcoal/70 dark:text-cream/70 leading-relaxed">
-            look, we know you're just here to procrastinate. but we figured, why not make it productive? Shortify is a blazing fast video app with zero annoying ads. we've got endless reels for when your brain needs a break, plus speaking courses and skills training for when you realize you should probably do something with your life. the ultimate win-win.
+            look, we know you're just here to procrastinate. but we figured, why not make it
+            productive? Shortify is a blazing fast video app with zero annoying ads. we've got
+            endless reels for when your brain needs a break, plus speaking courses and skills
+            training for when you realize you should probably do something with your life. the
+            ultimate win-win.
           </p>
         </div>
 
@@ -157,8 +162,8 @@ function AboutPage() {
           <p className="text-sm text-charcoal/70 dark:text-cream/70 leading-relaxed">
             Your data and privacy are paramount. Authentication and relational user data are secured
             by enterprise-grade PostgreSQL via Supabase with row-level security. Client credentials
-            and sensitive tokens remain shielded behind internal middle-proxy endpoints, ensuring
-            no backend URLs or confidential tokens are ever exposed to the public web.
+            and sensitive tokens remain shielded behind internal middle-proxy endpoints, ensuring no
+            backend URLs or confidential tokens are ever exposed to the public web.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge label="Encrypted Session Token" />
@@ -177,7 +182,8 @@ function AboutPage() {
             </h2>
           </div>
           <p className="text-sm text-charcoal/70 dark:text-cream/70 mb-4">
-            Engineered with the modern JavaScript ecosystem for maximum performance and fluid animations:
+            Engineered with the modern JavaScript ecosystem for maximum performance and fluid
+            animations:
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <TechItem label="React 18" sub="UI Framework" />
@@ -233,9 +239,7 @@ function AboutPage() {
 
       {/* Footer */}
       <footer className="mt-12 text-center text-xs text-charcoal/50 dark:text-cream/50 space-y-2">
-        <p>
-          © {currentYear} Shortify · All rights reserved.
-        </p>
+        <p>© {currentYear} Shortify · All rights reserved.</p>
         <p>
           Developed with ❤️ by{" "}
           <a

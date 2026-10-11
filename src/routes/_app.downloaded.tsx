@@ -50,10 +50,11 @@ import {
 import { OfflinePlayer } from "@/components/offline-player";
 
 type Tab = "download" | "library";
-type DownloadedSearch = { tab?: Tab };
+type DownloadedSearch = { tab?: Tab; [key: string]: unknown };
 
 export const Route = createFileRoute("/_app/downloaded")({
   validateSearch: (s: Record<string, unknown>): DownloadedSearch => ({
+    ...s,
     tab: s.tab === "library" || s.tab === "download" ? s.tab : undefined,
   }),
   component: DownloadedPage,

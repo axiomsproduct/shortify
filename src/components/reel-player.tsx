@@ -61,7 +61,9 @@ const renderTextWithLinks = (text: string) => {
       return (
         <a
           key={i}
-          href={DOMPurify.sanitize(part?.startsWith("http") || part?.startsWith("/") ? part : "about:blank")}
+          href={DOMPurify.sanitize(
+            part?.startsWith("http") || part?.startsWith("/") ? part : "about:blank",
+          )}
           target="_blank"
           rel="noopener noreferrer"
           className="text-cobalt-pop hover:underline"
@@ -119,14 +121,7 @@ const Timeline = memo(
 );
 
 const ProfileAvatar = memo(
-  ({
-    name,
-    size = "h-8 w-8",
-  }: {
-    name: string;
-    size?: string;
-    textClass?: string;
-  }) => {
+  ({ name, size = "h-8 w-8" }: { name: string; size?: string; textClass?: string }) => {
     return (
       <UserAvatar
         username={name}

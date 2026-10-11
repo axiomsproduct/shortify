@@ -127,17 +127,19 @@ function RedeemPage() {
         <p className="mt-1 text-sm font-medium text-marker">coins</p>
 
         <div className="mt-6 rounded-xl border border-charcoal/15 bg-background px-4 py-2.5 text-xs text-charcoal/70 dark:border-cream/15 dark:text-cream/70">
-          Exchange rate: <span className="font-bold text-cocoa dark:text-cream">1,000 coins = ₹10 INR</span>
+          Exchange rate:{" "}
+          <span className="font-bold text-cocoa dark:text-cream">1,000 coins = ₹10 INR</span>
         </div>
 
         <div className="mt-8 w-full max-w-sm">
           <button
             onClick={() => setIsModalOpen(true)}
             disabled={currentCoins < 1000}
-            className={`w-full rounded-xl py-3.5 px-6 font-display text-base font-bold transition-all shadow-md ${currentCoins >= 1000
+            className={`w-full rounded-xl py-3.5 px-6 font-display text-base font-bold transition-all shadow-md ${
+              currentCoins >= 1000
                 ? "bg-cobalt-pop text-white hover:bg-cobalt-pop/90 active:scale-95"
                 : "bg-charcoal/10 text-charcoal/40 dark:bg-cream/10 dark:text-cream/40 cursor-not-allowed"
-              }`}
+            }`}
           >
             {currentCoins >= 1000 ? "Request Payout Now" : "Need 1,000 Coins Minimum"}
           </button>
@@ -162,11 +164,16 @@ function RedeemPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="font-bold text-cobalt-pop">2.</span>
-            <span>The request is stored securely in your database history with status 'In Review'.</span>
+            <span>
+              The request is stored securely in your database history with status 'In Review'.
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <span className="font-bold text-cobalt-pop">3.</span>
-            <span>Once transferred via UPI, the admin updates status to 'Transferred' with UTR reference.</span>
+            <span>
+              Once transferred via UPI, the admin updates status to 'Transferred' with UTR
+              reference.
+            </span>
           </li>
         </ul>
       </div>

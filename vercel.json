@@ -4,11 +4,15 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/__viewer-country",
+      "destination": "https://randomchat.now/__viewer-country"
+    },
+    {
       "source": "/shortify/(.*)",
       "destination": "https://mcrhjyszrxbtiizhgacn.supabase.co/$1"
     },
     {
-      "source": "/((?!api/|shortify/|assets/|icons/|logo\\.png|PWA_ICON\\.png|manifest\\.json|favicon\\.|robots\\.txt|sitemap\\.).*)",
+      "source": "/((?!api/|__viewer-country|shortify/|assets/|icons/|logo\\.png|PWA_ICON\\.png|manifest\\.json|favicon\\.|robots\\.txt|sitemap\\.).*)",
       "destination": "/index.html"
     }
   ],

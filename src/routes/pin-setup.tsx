@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { rotateCsrfToken } from "@/lib/url-tracker";
 
 export const Route = createFileRoute("/pin-setup")({
+  validateSearch: (search: Record<string, unknown>) => ({ ...search }),
   component: PinSetupPage,
 });
 
@@ -75,6 +77,7 @@ function PinSetupPage() {
     if (!v.ok) return setError(v.reason ?? "invalid date.");
 
     // We pass empty string for name since we don't collect it here anymore
+    rotateCsrfToken("generate_pin");
     const code = await savePinSetup("", dob);
     setGenerated(code);
     setRevealed(true);
