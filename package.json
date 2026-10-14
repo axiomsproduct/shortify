@@ -81,6 +81,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/dompurify": "^3.0.5",
     "@types/pg": "^8.23.1",
+    "@vercel/analytics": "^2.0.1",
     "@vidstack/react": "^1.12.12",
     "appwrite": "^26.2.0",
     "canvas-confetti": "^1.9.4",
