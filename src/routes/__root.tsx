@@ -7,6 +7,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { NotFoundComponent } from "@/components/not-found";
 import { syncRouteUrl, initGlobalActionTracking } from "@/lib/url-tracker";
 
@@ -65,6 +66,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Analytics />
     </QueryClientProvider>
   );
 }
